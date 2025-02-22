@@ -22,7 +22,7 @@ interface Research{
 }
 
 async function createResearch({searchQuery, full}: {searchQuery: string, full: boolean}): Promise<{ researchId: number }> {
-    const response = await fetch('https://n8n2.supashkola.ru/webhook/research', {
+    const response = await fetch('http://127.0.0.1:5000/search', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -142,20 +142,25 @@ function Home() {
                         <div
                             className="relative flex flex-col bg-white rounded-xl shadow-lg border border-gray-200 p-4">
                             <div className="flex-1">
-                <textarea
-                    ref={textareaRef}
-                    value={searchQuery}
-                    onChange={handleQueryChange}
-                    placeholder="Введите тему исследования..."
-                    className="w-full text-base text-gray-800 bg-transparent outline-none
-                           font-light leading-relaxed resize-none
-                           whitespace-pre-wrap break-words
-                           min-h-[24px] overflow-hidden"
-                    style={{
-                        scrollbarWidth: 'thin',
-                        scrollbarColor: 'rgba(99, 102, 241, 0.5) rgba(255, 255, 255, 0.1)',
-                    }}
-                />
+                            <textarea
+                                ref={textareaRef}
+                                value={searchQuery}
+                                onChange={handleQueryChange}
+                                placeholder="Введите тему исследования..."
+                                className={`w-full text-base text-gray-800 bg-transparent outline-none
+                                    font-light leading-relaxed resize-none
+                                    whitespace-pre-wrap break-words
+                                    min-h-[24px] overflow-hidden ${ searchQuery.length > 0 && searchQuery.length < 10 ? "border-red-500" : "border-gray-200"}`}
+                                style={{
+                                    scrollbarWidth: 'thin',
+                                    scrollbarColor: 'rgba(99, 102, 241, 0.5) rgba(255, 255, 255, 0.1)',
+                                }}
+                            />
+                            {searchQuery.length > 0 && searchQuery.length < 10 && (
+                                <div className="text-red-500 text-xs mt-1">
+                                    Минимум 10 символов требуется.
+                                </div>
+                            )}
                             </div>
                             <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
                                 <div className="flex items-center gap-2">
@@ -190,15 +195,18 @@ function Home() {
 
                     <motion.button
                         initial={false}
-                        onClick={() => mutate({searchQuery, full: fullResearch})}
+                        onClick={() => {
+                            if (searchQuery.length >= 10) {
+                                mutate({ searchQuery, full: fullResearch });
+                            }
+                        }}
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}
-                        className="relative z-30 w-[200px] h-[45px]
-                      bg-gradient-to-r from-indigo-600/90 to-blue-600/90
-                      text-white rounded-lg text-base font-light tracking-wide
-                      shadow-lg hover:shadow-xl hover:scale-105 
-                      transition-all duration-300 ease-out 
-                      flex items-center justify-center gap-2"
+                        className={`relative z-30 w-[200px] h-[45px] flex items-center justify-center gap-2 rounded-lg text-base font-light tracking-wide transition-all duration-300 ease-out ${
+                            searchQuery.length > 0 && searchQuery.length < 10
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-gradient-to-r from-indigo-600/90 to-blue-600/90 hover:shadow-xl hover:scale-105 shadow-lg text-white"
+                        }`}
                         whileTap={{scale: 0.95}}
                     >
                         Начать исследование
