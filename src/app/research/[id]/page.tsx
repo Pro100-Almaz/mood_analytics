@@ -7,16 +7,12 @@ import Results from '@/components/Results';
 import Image from "next/image";
 
 const queryClient = new QueryClient();
-
-async function fetchResearchStatus(requestId: number) {
-    const response = await fetch('https://n8n2.supashkola.ru/webhook/find', {
+async function fetchResearchStatus(task_id: number) {
+    const response = await fetch(`https://api.insitute.etdc.kz/search_status/${task_id}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            request_id: requestId
-        })
+        }
     });
 
     if (!response.ok) {
@@ -38,6 +34,7 @@ function ResearchPage({id}: { id: string }) {
     }
     return (
         <div className="min-h-screen flex items-center justify-center">
+            {data}
             {displayReport ? (
                 <Results
                     full={data?.full_research}
