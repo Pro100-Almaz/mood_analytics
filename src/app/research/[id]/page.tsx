@@ -8,7 +8,7 @@ import Image from "next/image";
 
 const queryClient = new QueryClient();
 async function fetchResearchStatus(task_id: number) {
-    const response = await fetch(`https://api.insitute.etdc.kz/search_status/${task_id}`, {
+    const response = await fetch(`http://localhost:3000/search_status/${JSON.stringify(task_id)}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
