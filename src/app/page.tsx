@@ -23,7 +23,7 @@ interface Research{
 }
 
 async function createResearch({searchQuery}: {searchQuery: string}): Promise<{ task_id: number }> {
-    const response = await fetch('http://localhost:3000/search', {
+    const response = await fetch('https://api.insitute.etdc.kz/search', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -36,7 +36,6 @@ async function createResearch({searchQuery}: {searchQuery: string}): Promise<{ t
         throw new Error('Ошибка при создании исследования');
     }
     const data = await response.json();
-    console.log('Parsed Response:', data); 
 
     return data;
 }
@@ -54,7 +53,7 @@ async function getLatestResearches() {
     return response.json();
 }
 async function getTableData() {
-    const response = await fetch('http://localhost:3000/digests', {
+    const response = await fetch('https://api.insitute.etdc.kz/digests', {
         headers: {
             'Content-Type': 'application/json',
         },
