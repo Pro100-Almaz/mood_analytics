@@ -7,8 +7,8 @@ import Results from '@/components/Results';
 import Image from "next/image";
 
 const queryClient = new QueryClient();
-async function fetchResearchStatus(task_id: number) {
-    const response = await fetch(`http://localhost:3000/search_status/${JSON.stringify(task_id)}`, {
+async function fetchResearchStatus(task_id: string) {
+    const response = await fetch(`https://api.insitute.etdc.kz/search_status/${task_id}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ function ResearchPage({id}: { id: string }) {
     const [displayReport, setDisplayReport] = useState(false)
     const {data, error, isLoading} = useQuery({
         queryKey: ['researchStatus', id],
-        queryFn: () => fetchResearchStatus(+id),
+        queryFn: () => fetchResearchStatus(id),
         refetchInterval: 10000
     });
     if (data && !data.Prompt) {
