@@ -9,7 +9,7 @@ import Image from "next/image";
 const queryClient = new QueryClient();
 async function fetchResearchStatus(task_id: string) {
     const response = await fetch(`https://api.insitute.etdc.kz/search_status/${task_id}`, {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         }

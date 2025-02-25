@@ -291,9 +291,10 @@ function Home() {
           ) : isError ? (
             <p className="text-red-500">Ошибка загрузки данных</p>
           ) : (
-            <table className="lg:w-1/3 md:w-1/2 border-collapse border border-gray-400 rounded-lg shadow-lg overflow-hidden">
+            <table className="lg:w-1/2 md:w-1/2 border-collapse border border-gray-400 rounded-lg shadow-lg overflow-hidden">
               <thead>
                 <tr className="bg-gray-300 text-gray-800 text-left">
+                  <th className="border border-gray-400 px-6 py-3">Номер</th>
                   <th className="border border-gray-400 px-6 py-3">Название</th>
                   <th className="border border-gray-400 px-6 py-3">Дата</th>
                   <th className="border border-gray-400 px-6 py-3">Действие</th>
@@ -305,6 +306,9 @@ function Home() {
                     key={index}
                     className="odd:bg-white even:bg-gray-100 transition-colors"
                   >
+                    <td className="border border-gray-400 px-6 py-3">
+                      {index + 1}
+                    </td>
                     <td className="border border-gray-400 px-6 py-3">
                       {item.title}
                     </td>
