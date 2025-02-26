@@ -36,7 +36,7 @@ export default function AuthModal({
 
     setUploading(true);
     try {
-      const response = await fetch("https://your-upload-endpoint.com/upload", {
+      const response = await fetch("https://api.insitute.etdc.kz/upload", {
         method: "POST",
         body: formData,
       });
@@ -44,11 +44,8 @@ export default function AuthModal({
       if (!response.ok) throw new Error("Upload failed");
 
       const result = await response.json();
-      console.log("Upload successful:", result);
-      alert("Файл загружен успешно");
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Ошибка загрузки файла");
     } finally {
       setUploading(false);
     }

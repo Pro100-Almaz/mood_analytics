@@ -29,12 +29,12 @@ function ResearchPage({id}: { id: string }) {
         queryFn: () => fetchResearchStatus(id),
         refetchInterval: 10000
     });
-    if (data && !data.Prompt) {
+    if (data?.state === 'FAILURE') {
+        console.log(data)
         notFound();
     }
     return (
         <div className="min-h-screen flex items-center justify-center">
-            {data}
             {displayReport ? (
                 <Results
                     full={data?.full_research}
@@ -56,16 +56,6 @@ function ResearchPage({id}: { id: string }) {
                 <ProgressPage setDisplayReport={setDisplayReport}
                               isLoading={isLoading}
                               title={data?.Prompt}
-                              web={data?.web}
-                              fb={data?.FB}
-                              foundPosts={data?.found_posts}
-                              foundComments={data?.found_comments}
-                              foundDialogs={data?.found_dialog}
-                              dataDialogs={data?.egov_dialog}
-                              foundEgovNpa={data?.found_egov_npa}
-                              foundAdiletNpa={data?.found_adilet_npa}
-                              egovNpa={data?.egov_npa}
-                              adiletNpa={data?.adilet_npa}
                 />
             )}
         </div>
