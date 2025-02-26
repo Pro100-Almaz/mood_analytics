@@ -364,9 +364,15 @@ function Home() {
                         {item.date}
                       </td>
                       <td className="border border-gray-400 px-6 py-3 text-center">
-                        <button onClick={() => downloadFile(item.id)} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-                          Скачать
-                        </button>
+                        <a
+                            href={`https://api.insitute.etdc.kz/digest?id=${item.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+                            Скачать
+                          </button>
+                        </a>
                       </td>
                     </tr>
                   ))
