@@ -5,6 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ProgressCard } from '@/components/ProgressCard';
 import { AIVisualization } from '@/components/AIVisualization';
 
+const titles = [
+    'Анализ веб-ресурсов',
+    'Анализ социальных медиа',
+    'Анализ обращений',
+    'Анализ законодательства',
+];
+
 const webSteps = [
     'ищу релевантные веб-ресурсы и источники...',
     'оцениваю достоверность и качество найденных источников...',
@@ -52,11 +59,13 @@ interface ProgressPageProps {
     title: string;
 }
 
-export default function ProgressPage({ setDisplayReport, isLoading, title }: ProgressPageProps) {
+export default function ProgressPage({ setDisplayReport, isLoading }: ProgressPageProps) {
     const [currentSection, setCurrentSection] = useState<Section>('web');
     const [currentSteps, setCurrentSteps] = useState<Record<Section, number>>({ web: 0, social: 0, dialog: 0, npa: 0 });
     const [completedSections, setCompletedSections] = useState<Record<Section, boolean>>({ web: false, social: false, dialog: false, npa: false });
     const [isComplete, setIsComplete] = useState(false);
+
+    const title = titles[sections.indexOf(currentSection)];
 
     const settingState = useCallback(() => {
         setCurrentSteps((prev) => {
@@ -131,7 +140,7 @@ export default function ProgressPage({ setDisplayReport, isLoading, title }: Pro
                                 {sections.map((section, index) => (
                                     <motion.div key={section} initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.2 }}>
                                         <ProgressCard
-                                            title={section}
+                                            title={titles[index]} 
                                             steps={stepsData[section].map((text, i) => ({ id: i + 1, text, status: 'pending' }))}
                                             currentStep={completedSections[section] ? stepsData[section].length : currentSteps[section]}
                                             isCompleted={completedSections[section]}

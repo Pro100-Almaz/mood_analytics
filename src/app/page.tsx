@@ -76,34 +76,6 @@ async function getTableData(page: number = 1) {
   }
   return response.json();
 }
-async function downloadFile(id: number) {
-  try {
-    const response = await fetch(
-      `https://api.insitute.etdc.kz/digests?id=${id}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Ошибка загрузки файла");
-    }
-
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `digest_${id}.docx`; 
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error("Ошибка при скачивании файла:", error);
-  }
-}
 const queryClient = new QueryClient();
 
 function Home() {
@@ -365,10 +337,9 @@ function Home() {
                       </td>
                       <td className="border border-gray-400 px-6 py-3 text-center">
                         <a
-                            href={`https://api.insitute.etdc.kz/digest?id=${item.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                          href={`https://api.insitute.etdc.kz/digest?id=${item.id}`}
+                          rel="noopener noreferrer"
+                        >
                           <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
                             Скачать
                           </button>
@@ -385,24 +356,53 @@ function Home() {
                 )}
               </tbody>
             </table>
-
-            <div className="flex gap-4 mt-4">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-              >
-                Назад
-              </button>
-              <div className="flex items-center">
-                <p>Страница {currentPage}</p>
+            <div className="w-2/3 flex justify-end">
+              <div className="flex gap-4 mt-4">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+                <div className="flex items-center">
+                  <p>Страница {currentPage}</p>
+                </div>
+                <button
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  className="px-4 py-2 bg-gray-300 rounded"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
               </div>
-              <button
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-                className="px-4 py-2 bg-gray-300 rounded"
-              >
-                Вперед
-              </button>
             </div>
           </>
         )}
