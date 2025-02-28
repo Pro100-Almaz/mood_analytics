@@ -47,6 +47,7 @@ interface ResultsPageProps {
     createdAt?: string
     finishedAt?: string
     full?: boolean
+    research? : string
     resultData? : string
 }
 
@@ -60,10 +61,7 @@ interface SocialMediaType {
     message: string;
 }
 
-interface WebResult {
-    // research: string
-    citations: string[]
-}
+
 function formatTimeDifference(date1: string, date2: string) {
     // Парсим даты
     const d1 = new Date(date1);
@@ -101,6 +99,7 @@ export default function ResultsPage({
                                         createdAt,
                                         finishedAt,
                                         full,
+                                        research,
                                         resultData
                                     }: ResultsPageProps) {
     const [activeSection, setActiveSection] = useState('egov_dialog');
@@ -114,9 +113,17 @@ export default function ResultsPage({
     const npa: SourceType[] = useMemo(() => {
         return [...JSON.parse(egovNpa || "[]"), ...JSON.parse(adiletNpa || "[]")]
     }, [egovNpa, adiletNpa])
-    const webResults: WebResult[] = useMemo(() => {
-        return JSON.parse(web || "[]")
-    }, [web])
+    const webResults: string[] = useMemo(() => {
+        try {
+            const parsedWeb = JSON.parse( web  || "[]"); // Ensure web is parsed correctly
+            return Array.isArray(parsedWeb) ? parsedWeb.filter(url => typeof url === 'string' && url.startsWith('https://')) : [];
+        } catch {
+            return [];
+        }
+    }, [web]);
+    const researchText: string = useMemo(() => {
+        return JSON.parse(research || "[]")
+    }, [research])
     const socialMedia: SocialMediaType[] = useMemo(() => {
         return JSON.parse(fb || "[]")
     }, [fb])
@@ -389,32 +396,30 @@ export default function ResultsPage({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="space-y-4 flex flex-col"
+                className="space-y-4"
               >
                 <div className="bg-white p-6 rounded-xl shadow-sm">
-                  {/* <p>
-                    {webResults}
-                  </p> */}
+                  <p>{researchText}</p>
                 </div>
-                {webResults.map((result, index) => (
-                  <div
-                    key={index}
-                    className="bg-white p-6 rounded-xl shadow-sm"
-                  >
-                    {result.citations.map((citation, i) => (
-                      <div key={i}>
-                        <a
-                          href={citation}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 hover:underline"
-                        >
-                          {`Источник ${index + 1}-${i + 1}`}
-                        </a>
-                      </div>
-                    ))}
-                  </div>
-                ))}
+                {webResults.length > 0 ? (
+                  webResults.map((link, index) => (
+                    <div
+                      key={index}
+                      className="bg-white p-6 rounded-xl shadow-sm"
+                    >
+                      <a
+                        href={link}
+                        className="text-blue-500 hover:text-blue-700"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Источник {index + 1} →
+                      </a>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-700">Нет доступных источников</p>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

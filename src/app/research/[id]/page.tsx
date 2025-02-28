@@ -49,7 +49,8 @@ function ResearchPage({id}: { id: string }) {
                     createdAt={data?.created_at}
                     finishedAt={data?.finished_at}
                     title={data?.Prompt}
-                    web={JSON.stringify(data?.result?.response?.citations)}
+                    web={JSON.stringify(data?.result?.response?.web?.citations)}
+                    research = {JSON.stringify(data?.result?.response?.web?.research)}
                     fb={JSON.stringify(data?.result?.response?.facebook)}
                     foundPosts={data?.found_posts}
                     foundComments={data?.found_comments}
