@@ -55,6 +55,11 @@ interface SourceType {
     summary: string
 }
 
+interface SocialMediaType {
+    url: string;
+    message: string;
+}
+
 interface WebResult {
     research: string
     citations: string[]
@@ -112,7 +117,7 @@ export default function ResultsPage({
     const webResults: WebResult[] = useMemo(() => {
         return JSON.parse(web || JSON.stringify(resultData?.result?.response?.web?.citations || "[]"))
     }, [web])
-    const socialMedia: SourceType[] = useMemo(() => {
+    const socialMedia: SocialMediaType[] = useMemo(() => {
         return JSON.parse(web || JSON.stringify(resultData?.result?.response?.facebook || "[]"))
     }, [fb])
     const statistics = [
@@ -386,7 +391,7 @@ export default function ResultsPage({
                     >
                       <p className="text-gray-700">{item.message}</p>
                       <a
-                        href={item.link}
+                        href={item.url}
                         className="text-blue-500 hover:text-blue-700 mt-2 inline-block"
                         target="_blank"
                         rel="noopener noreferrer"
