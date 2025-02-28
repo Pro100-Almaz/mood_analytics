@@ -87,7 +87,7 @@ export default function ProgressPage({ setDisplayReport, isLoading }: ProgressPa
         if (isLoading) return;
         const stepInterval = setInterval(() => {
             settingState();
-        }, 2000);
+        }, 22200);
 
         return () => clearInterval(stepInterval);
     }, [isLoading, settingState]);
