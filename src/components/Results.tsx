@@ -61,7 +61,7 @@ interface SocialMediaType {
 }
 
 interface WebResult {
-    research: string
+    // research: string
     citations: string[]
 }
 function formatTimeDifference(date1: string, date2: string) {
@@ -109,16 +109,16 @@ export default function ResultsPage({
         setShowNumber(true)
     }, 100)
     const dialogs: SourceType[] = useMemo(() => {
-        return JSON.parse(dataDialogs || JSON.stringify(resultData?.result?.response?.egov?.dialog || "[]"))
+        return JSON.parse(dataDialogs || "[]")
     }, [dataDialogs])
     const npa: SourceType[] = useMemo(() => {
-        return [...JSON.parse(egovNpa || JSON.stringify(resultData?.result?.response?.egov?.opendata || "[]")), ...JSON.parse(adiletNpa || JSON.stringify(resultData?.result?.response?.adilet?.npa || "[]"))]
+        return [...JSON.parse(egovNpa || "[]"), ...JSON.parse(adiletNpa || "[]")]
     }, [egovNpa, adiletNpa])
     const webResults: WebResult[] = useMemo(() => {
-        return JSON.parse(web || JSON.stringify(resultData?.result?.response?.web?.citations || "[]"))
+        return JSON.parse(web || "[]")
     }, [web])
     const socialMedia: SocialMediaType[] = useMemo(() => {
-        return JSON.parse(web || JSON.stringify(resultData?.result?.response?.facebook || "[]"))
+        return JSON.parse(fb || "[]")
     }, [fb])
     const statistics = [
         {
@@ -237,9 +237,15 @@ export default function ResultsPage({
               <thead>
                 <tr className="bg-gray-300 text-gray-800 text-left">
                   <th className="border border-gray-400 px-6 py-3">Название</th>
-                  <th className="border border-gray-400 px-6 py-3">Положительные отзывы</th>
-                  <th className="border border-gray-400 px-6 py-3">Отрицательные отзывы</th>
-                  <th className="border border-gray-400 px-6 py-3">Нейтральные отзывы</th>
+                  <th className="border border-gray-400 px-6 py-3">
+                    Положительные отзывы
+                  </th>
+                  <th className="border border-gray-400 px-6 py-3">
+                    Отрицательные отзывы
+                  </th>
+                  <th className="border border-gray-400 px-6 py-3">
+                    Нейтральные отзывы
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -251,7 +257,7 @@ export default function ResultsPage({
                     19 комментариев в 2021 году
                   </td>
                   <td className="border border-gray-400 px-6 py-3">
-                    5 комментариев в 2021 году 
+                    5 комментариев в 2021 году
                   </td>
                   <td className="border border-gray-400 px-6 py-3">
                     5 комментариев в 2021 году
@@ -348,32 +354,6 @@ export default function ResultsPage({
               </motion.div>
             )}
 
-            {/*{activeSection === 'adilet_nla' && (
-                        <motion.div
-                            key="adilet_nla"
-                            initial={{opacity: 0}}
-                            animate={{opacity: 1}}
-                            exit={{opacity: 0}}
-                            className="space-y-4"
-                        >
-                            {npa.filter(el => el?.link !== "null" && el?.summary).map((item, index) => (
-                                item && (
-                                    <div key={index} className="bg-white p-6 rounded-xl shadow-sm">
-                                        <p className="text-gray-700">{item.summary}</p>
-                                        <a
-                                            href={item.link}
-                                            className="text-blue-500 hover:text-blue-700 mt-2 inline-block"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                        >
-                                            Подробнее →
-                                        </a>
-                                    </div>
-                                )
-                            ))}
-                        </motion.div>
-                    )}*/}
-
             {activeSection === "fb" && (
               <motion.div
                 key="fb"
@@ -400,36 +380,6 @@ export default function ResultsPage({
                       </a>
                     </div>
                   ))}
-                {/* <div className="prose prose-gray max-w-none">
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                      h3: ({ node, ...props }) => (
-                        <h3
-                          className="text-xl font-medium text-gray-800 mt-6 mb-4"
-                          {...props}
-                        />
-                      ),
-                      p: ({ node, ...props }) => (
-                        <p className="text-gray-700 mb-4" {...props} />
-                      ),
-                      ul: ({ node, ...props }) => (
-                        <ul className="list-disc pl-6 mb-4" {...props} />
-                      ),
-                      li: ({ node, ...props }) => (
-                        <li className="text-gray-700 mb-2" {...props} />
-                      ),
-                      strong: ({ node, ...props }) => (
-                        <strong
-                          className="font-medium text-gray-900"
-                          {...props}
-                        />
-                      ),
-                    }}
-                  >
-                    {fb}
-                  </ReactMarkdown>
-                </div> */}
               </motion.div>
             )}
 
@@ -442,83 +392,29 @@ export default function ResultsPage({
                 className="space-y-4 flex flex-col"
               >
                 <div className="bg-white p-6 rounded-xl shadow-sm">
-                  <p>
-                    {typeof resultData === "object"
-                      ? JSON.stringify(
-                          resultData?.result?.response?.web?.research
-                        )
-                      : resultData}
-                  </p>
+                  {/* <p>
+                    {webResults}
+                  </p> */}
                 </div>
-                {webResults.map((link, index) => (
+                {webResults.map((result, index) => (
                   <div
                     key={index}
                     className="bg-white p-6 rounded-xl shadow-sm"
                   >
-                    <a
-                      href={link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 hover:underline"
-                    >
-                      {`Источник ${index + 1}`}
-                    </a>
+                    {result.citations.map((citation, i) => (
+                      <div key={i}>
+                        <a
+                          href={citation}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:underline"
+                        >
+                          {`Источник ${index + 1}-${i + 1}`}
+                        </a>
+                      </div>
+                    ))}
                   </div>
                 ))}
-                {/* {webResults.map((el: WebResult, i: number) => (
-                                <div key={i}>
-                                    <ReactMarkdown
-                                        remarkPlugins={[remarkGfm]}
-                                        components={{
-                                            h1: ({node, ...props}) => <h1
-                                                className="text-2xl font-medium text-gray-800 mt-6 mb-4" {...props} />,
-                                            h3: ({node, ...props}) => <h3
-                                                className="text-xl font-medium text-gray-800 mt-6 mb-4" {...props} />,
-                                            p: ({node, ...props}) => <p className="text-gray-700 mb-4" {...props} />,
-                                            ul: ({node, ...props}) => <ul className="list-disc pl-6 mb-4" {...props} />,
-                                            li: ({node, ...props}) => <li className="text-gray-700 mb-2" {...props} />,
-                                            strong: ({node, ...props}) => <strong
-                                                className="font-medium text-gray-900" {...props} />
-                                        }}
-                                    >
-                                        {"# " + el.research}
-                                    </ReactMarkdown>
-                                    <div className="space-y-2">
-                                        <h3 className="text-xl font-light mb-4">Источники:</h3>
-                                        {el.citations?.map((link, index) => (
-                                            <a
-                                                key={index}
-                                                href={link}
-                                                className="text-blue-500 text-wrap break-all hover:text-blue-700 block"
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                            >
-                                                {index + 1}. {link}
-                                            </a>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))} */}
-                {/*<div className="bg-white p-6 rounded-xl shadow-sm">*/}
-                {/*    <p className="text-gray-700">{data.WEB}</p>*/}
-                {/*</div>*/}
-
-                {/*<div className="bg-white p-6 rounded-xl shadow-sm">*/}
-                {/*    <h3 className="text-xl font-light mb-4">Источники:</h3>*/}
-                {/*    <div className="space-y-2">*/}
-                {/*        {data.WEB.map((link, index) => (*/}
-                {/*            <a*/}
-                {/*                key={index}*/}
-                {/*                href={link}*/}
-                {/*                className="text-blue-500 hover:text-blue-700 block"*/}
-                {/*                target="_blank"*/}
-                {/*                rel="noopener noreferrer"*/}
-                {/*            >*/}
-                {/*                {link}*/}
-                {/*            </a>*/}
-                {/*        ))}*/}
-                {/*    </div>*/}
-                {/*</div>*/}
               </motion.div>
             )}
           </AnimatePresence>

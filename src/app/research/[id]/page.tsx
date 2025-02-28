@@ -49,16 +49,16 @@ function ResearchPage({id}: { id: string }) {
                     createdAt={data?.created_at}
                     finishedAt={data?.finished_at}
                     title={data?.Prompt}
-                    web={data?.web}
-                    fb={data?.FB}
+                    web={JSON.stringify(data?.result?.response?.citations)}
+                    fb={JSON.stringify(data?.result?.response?.facebook)}
                     foundPosts={data?.found_posts}
                     foundComments={data?.found_comments}
                     foundDialogs={data?.found_dialog}
-                    dataDialogs={data?.egov_dialog}
+                    dataDialogs={JSON.stringify(data?.result?.response?.egov?.dialog)}
                     foundEgovNpa={data?.found_egov_npa}
                     foundAdiletNpa={data?.found_adilet_npa}
-                    egovNpa={data?.egov_npa}
-                    adiletNpa={data?.adilet_npa}
+                    egovNpa={JSON.stringify(data?.result?.response?.egov?.opendata)}
+                    adiletNpa={JSON.stringify(data?.result?.response?.adilet?.npa)}
                     resultData={data}
                 />
             ) : (
