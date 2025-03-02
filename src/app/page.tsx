@@ -1,5 +1,7 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -17,7 +19,7 @@ import { Switch } from "@/components/Switch/Switch";
 interface Research {
   id: number;
   created_at: string;
-  Prompt: string;
+  query: string;
   Tools: string;
   web: string;
   "Final report": string;
@@ -49,7 +51,7 @@ async function createResearch({
   return data;
 }
 async function getLatestResearches() {
-  const response = await fetch("https://n8n2.supashkola.ru/webhook/latest", {
+  const response = await fetch("https://api.insitute.etdc.kz/least", {
     headers: {
       "Content-Type": "application/json",
     },
@@ -86,6 +88,19 @@ function Home() {
   const [fullResearch, setFullResearch] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const pathname = usePathname();
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [reviewText, setReviewText] = useState("");
+
+  const handleSubmitReview = () => {
+    if (reviewText.trim().length < 5) {
+      alert("Отзыв должен содержать минимум 5 символов.");
+      return;
+    }
+    console.log("Отправленный отзыв:", reviewText);
+    setIsReviewOpen(false);
+    setReviewText("");
+  };
   const { data: latest } = useQuery({
     queryKey: ["latestResearches"],
     queryFn: () => getLatestResearches(),
@@ -142,17 +157,44 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="flex justify-end p-4">
-        <motion.button
-          className="relative z-30 px-4 py-2 flex items-center justify-center gap-2 rounded-lg 
+      <header className="bg-white shadow-md">
+        <div className="max-w-6xl mx-auto flex justify-between">
+          <nav className="flex space-x-4 flex items-center">
+            <Link
+              href="/"
+              className={`px-4 py-2 rounded  ${
+                pathname === "/page.tsx"
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700"
+              }`}
+            >
+              Главная
+            </Link>
+            <Link
+              href="/digests"
+              className={`px-4 py-2 rounded ${
+                pathname === "/digest-table.tsx"
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-700"
+              }`}
+            >
+              Отчёты
+            </Link>
+          </nav>
+          <div className="flex justify-end p-4">
+            <motion.button
+              className="relative z-30 px-4 py-2 flex items-center justify-center gap-2 rounded-lg 
                                text-base font-light tracking-wide transition-all duration-300 ease-out 
                                bg-gradient-to-r from-indigo-600/90 to-blue-600/90 hover:shadow-xl 
                                hover:scale-105 shadow-lg text-white"
-          onClick={() => setIsModalOpen(true)}
-        >
-          Загрузить дайджест
-        </motion.button>
-      </div>
+              onClick={() => setIsModalOpen(true)}
+            >
+              Загрузить дайджест
+            </motion.button>
+          </div>
+        </div>
+      </header>
+
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <div className="max-w-6xl mx-auto px-4 py-8">
         <Image
@@ -184,7 +226,7 @@ function Home() {
               latest
                 ? latest.map((el: Research) => ({
                     id: el.id,
-                    title: el.Prompt,
+                    query: el.query,
                     date: el.created_at,
                     status: el.finished_at ? "completed" : "in_progress",
                   }))
@@ -194,7 +236,7 @@ function Home() {
         </div>
 
         <motion.div
-          className="relative z-20 max-w-[800px] mx-auto mb-8"
+          className="relative z-20 max-w-[800px] mx-auto mb-16"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -300,112 +342,44 @@ function Home() {
             )}
           </motion.button>
         </div>
-      </div>
-      <div className="flex flex-col items-center justify-center mt-8 pb-6">
-        <h1 className="text-2xl font-light text-gray-800 mb-3">Дайджест</h1>
+        <>
+      <motion.button
+        onClick={() => setIsReviewOpen(true)}
+        className="fixed bottom-6 right-6 z-30 px-4 py-2 flex items-center justify-center gap-2 rounded-lg 
+                               text-base font-light tracking-wide transition-all duration-300 ease-out 
+                               bg-gradient-to-r from-indigo-600/90 to-blue-600/90 hover:shadow-xl 
+                              shadow-lg text-white hover:scale-105 "
+      >
+        Оставить отзыв
+      </motion.button>
 
-        {isLoading ? (
-          <p>Загрузка данных...</p>
-        ) : isError ? (
-          <p className="text-red-500">Ошибка загрузки данных</p>
-        ) : (
-          <>
-            <table className="lg:w-2/3 md:w-1/2 border-collapse border border-gray-400 rounded-lg shadow-lg overflow-hidden">
-              <thead>
-                <tr className="bg-gray-300 text-gray-800 text-left">
-                  <th className="border border-gray-400 px-4 py-3">Номер</th>
-                  <th className="border border-gray-400 px-6 py-3">Название</th>
-                  <th className="border border-gray-400 px-6 py-3">Дата</th>
-                  <th className="border border-gray-400 px-6 py-3">Действие</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tableData?.data?.length ? (
-                  tableData.data.map((item: any, index: number) => (
-                    <tr
-                      key={index}
-                      className="odd:bg-white even:bg-gray-100 transition-colors"
-                    >
-                      <td className="border border-gray-400 px-6 py-3">
-                        {index + 1}
-                      </td>
-                      <td className="border border-gray-400 px-6 py-3">
-                        {item.title}
-                      </td>
-                      <td className="border border-gray-400 px-6 py-3">
-                        {item.date}
-                      </td>
-                      <td className="border border-gray-400 px-6 py-3 text-center">
-                        <a
-                          href={`https://api.insitute.etdc.kz/digest?id=${item.id}`}
-                          rel="noopener noreferrer"
-                        >
-                          <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
-                            Скачать
-                          </button>
-                        </a>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="text-center p-4">
-                      Данные отсутствуют
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-            <div className="w-2/3 flex justify-end">
-              <div className="flex gap-4 mt-4">
-                <button
-                  disabled={currentPage === 1}
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    className="w-5 h-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                </button>
-                <div className="flex items-center">
-                  <p>Страница {currentPage}</p>
-                </div>
-                <button
-                  onClick={() => setCurrentPage((prev) => prev + 1)}
-                  className="px-4 py-2 bg-gray-300 rounded"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={2}
-                    stroke="currentColor"
-                    className="w-5 h-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </>
-        )}
+      {isReviewOpen && (
+        <div className="fixed bottom-16 right-6 bg-white p-4 shadow-lg rounded-lg w-80 border border-gray-200 mb-4">
+          <h3 className="text-lg font-medium text-gray-800 mb-2">Ваш отзыв</h3>
+          <textarea
+            className="w-full border p-2 rounded resize-none text-gray-700"
+            rows={3}
+            value={reviewText}
+            onChange={(e) => setReviewText(e.target.value)}
+            placeholder="Напишите ваш отзыв..."
+          />
+          <div className="flex justify-end mt-2 space-x-2">
+            <button
+              className="px-3 py-1 text-sm bg-gray-300 rounded hover:bg-gray-400"
+              onClick={() => setIsReviewOpen(false)}
+            >
+              Отмена
+            </button>
+            <button
+              className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+              onClick={handleSubmitReview}
+            >
+              Отправить
+            </button>
+          </div>
+        </div>
+      )}
+    </>
       </div>
     </div>
   );

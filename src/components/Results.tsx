@@ -340,14 +340,15 @@ export default function ResultsPage({
                 exit={{ opacity: 0 }}
                 className="space-y-4"
               >
-                {npa
-                  .filter((el) => el?.link !== "null" && el?.summary)
-                  .map((item, index) => (
-                    <div
-                      key={index}
-                      className="bg-white p-6 rounded-xl shadow-sm"
-                    >
-                      <p className="text-gray-700">{item.summary}</p>
+                {npa.map((item, index) => (
+                  <div
+                    key={index}
+                    className="bg-white p-6 rounded-xl shadow-sm"
+                  >
+                    <p className="text-gray-700">
+                      {item.summary || "Нет описания"}
+                    </p>
+                    {item.link && item.link !== "null" ? (
                       <a
                         href={item.link}
                         className="text-blue-500 hover:text-blue-700 mt-2 inline-block"
@@ -356,8 +357,11 @@ export default function ResultsPage({
                       >
                         Подробнее →
                       </a>
-                    </div>
-                  ))}
+                    ) : (
+                      <span className="text-gray-400">Ссылка отсутствует</span>
+                    )}
+                  </div>
+                ))}
               </motion.div>
             )}
 

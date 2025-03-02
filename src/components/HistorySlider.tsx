@@ -8,7 +8,7 @@ import Link from "next/link";
 
 interface Research {
     id: number;
-    title: string;
+    query: string;
     date: string;
     status: 'completed' | 'in_progress' | 'error';
 }
@@ -64,7 +64,7 @@ export function HistorySlider({researches}: HistorySliderProps) {
                                 <div className="flex flex-col space-y-1 justify-between h-full">
                                     <div className="flex justify-between items-start gap-2">
                                         <h3 className="text-gray-900 font-medium text-xs leading-tight">
-                                            {research.title}
+                                            {research.query}
                                         </h3>
                                         <motion.div
                                             className={`px-1.5 py-0.5 rounded-full text-[9px] font-medium whitespace-nowrap

@@ -87,7 +87,7 @@ export default function ProgressPage({ setDisplayReport, isLoading }: ProgressPa
         if (isLoading) return;
         const stepInterval = setInterval(() => {
             settingState();
-        }, 22200);
+        }, 23000);
 
         return () => clearInterval(stepInterval);
     }, [isLoading, settingState]);
@@ -112,27 +112,16 @@ export default function ProgressPage({ setDisplayReport, isLoading }: ProgressPa
                     </motion.div>
                 ) : (
                     <motion.div className="max-w-7xl mx-auto px-4 py-12">
-                        <motion.h1 className="text-4xl md:text-5xl font-light mb-12 text-center text-gray-800">
+                        <motion.h1 className="text-4xl md:text-5xl font-light mb-6 text-center text-gray-800">
                             {title}
                         </motion.h1>
-
+                        <motion.p className="text-center mb-8">Загрузка исследования... </motion.p>
                         <div className="relative flex justify-center items-center mb-16 h-[353px]">
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <div className="w-[353px] h-[353px]">
                                     <AIVisualization isHovered={isComplete} />
                                 </div>
                             </div>
-                            {isComplete && (
-                                <motion.button
-                                    onClick={() => setDisplayReport(true)}
-                                    className="relative z-10 w-[300px] h-[60px] bg-gray-900 text-white rounded-xl text-lg font-light shadow-lg hover:bg-gray-800 transition-all duration-300 ease-out flex items-center justify-center group"
-                                    whileTap={{ scale: 0.98 }}
-                                >
-                                    <span className="relative">
-                                        Сформировать результат
-                                    </span>
-                                </motion.button>
-                            )}
                         </div>
 
                         {!isLoading && (
