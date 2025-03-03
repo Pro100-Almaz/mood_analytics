@@ -115,7 +115,7 @@ export default function ResultsPage({
     }, [egovNpa, adiletNpa])
     const webResults: string[] = useMemo(() => {
         try {
-            const parsedWeb = JSON.parse( web  || "[]"); // Ensure web is parsed correctly
+            const parsedWeb = JSON.parse( web  || "[]"); 
             return Array.isArray(parsedWeb) ? parsedWeb.filter(url => typeof url === 'string' && url.startsWith('https://')) : [];
         } catch {
             return [];
@@ -131,24 +131,24 @@ export default function ResultsPage({
         {
             id: 0,
             text: "Использовано веб-источников",
-            number: webResults.length * 5 || 26
+            number: webResults.length
         },
         {
             id: 1,
             text: "Проанализировано постов в соц. сетях",
-            number: foundPosts || "58"
+            number: socialMedia.length
         },
         {
             id: 2,
             text: "Найдено обращений граждан",
             number: foundDialogs || 42,
-            realNumber: dialogs.length || 26
+            realNumber: dialogs.length 
         },
         {
             id: 3,
             text: "Найдено нормативно-правовых актов",
             number: foundEgovNpa + foundAdiletNpa || 31,
-            realNumber: npa.length || 17
+            realNumber: npa.length 
         }
     ]
     return (
