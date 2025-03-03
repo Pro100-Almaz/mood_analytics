@@ -104,15 +104,31 @@ export default function ResultsPage({
                                     }: ResultsPageProps) {
     const [activeSection, setActiveSection] = useState('egov_dialog');
     const [showNumber, setShowNumber] = useState(false);
+    const safeParseJSON = (data: any, fallback: any[] = []) => {
+      try {
+          const parsed = typeof data === "string" && data.trim() !== "" ? JSON.parse(data) : fallback;
+          return Array.isArray(parsed) ? parsed : fallback; // Ensure always an array
+      } catch (error) {
+          console.error("JSON parsing error:", error);
+          return fallback;
+      }
+  };
     setTimeout(() => {
         setShowNumber(true)
     }, 100)
     const dialogs: SourceType[] = useMemo(() => {
-        return JSON.parse(dataDialogs || "[]")
-    }, [dataDialogs])
-    const npa: SourceType[] = useMemo(() => {
-        return [...JSON.parse(egovNpa || "[]"), ...JSON.parse(adiletNpa || "[]")]
-    }, [egovNpa, adiletNpa])
+      return safeParseJSON(dataDialogs, []);
+  }, [dataDialogs]);
+
+  
+  const npa: SourceType[] = useMemo(() => {
+      const egovNpaArray = safeParseJSON(egovNpa, []);
+      const adiletNpaArray = safeParseJSON(adiletNpa, []);
+  
+      return [...egovNpaArray, ...adiletNpaArray]; 
+  }, [egovNpa, adiletNpa]);
+  
+  
     const webResults: string[] = useMemo(() => {
         try {
             const parsedWeb = JSON.parse( web  || "[]"); 
