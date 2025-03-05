@@ -34,14 +34,17 @@ async function fetchResearchStatus(task_id: string) {
 
 function ResearchPage({ id }: { id: string }) {
   const [displayReport, setDisplayReport] = useState(false);
+  const [shouldRefetch, setShouldRefetch] = useState(true);
+
   const { data, error, isLoading } = useQuery({
     queryKey: ["researchStatus", id],
     queryFn: () => fetchResearchStatus(id),
-    refetchInterval: 10000,
+    refetchInterval: shouldRefetch ? 10000 : false,
   });
-
+  
   useEffect(() => {
     if (data?.state === "SUCCESS") {
+      setShouldRefetch(false);
       setDisplayReport(true);
     }
   }, [data?.state]);
@@ -64,8 +67,8 @@ function ResearchPage({ id }: { id: string }) {
           fb={JSON.stringify(data?.result?.response?.facebook)}
           foundPosts={data?.found_posts}
           foundComments={data?.found_comments}
-          foundDialogs={data?.found_dialog}
-          dataDialogs={JSON.stringify(data?.result?.response?.egov?.dialog)}
+          foundDialogs={JSON.stringify(data?.result?.response?.egov?.dialog?.all)}
+          dataDialogs={JSON.stringify(data?.result?.response?.egov?.dialog?.assistant_reply)}
           foundEgovNpa={data?.found_egov_npa}
           foundAdiletNpa={data?.found_adilet_npa}
           egovNpa={JSON.stringify(data?.result?.response?.egov?.opendata)}

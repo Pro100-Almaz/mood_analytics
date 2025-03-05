@@ -38,7 +38,7 @@ interface ResultsPageProps {
     foundComments?: number
     fb?: string,
     web?: string,
-    foundDialogs?: number
+    foundDialogs?: string
     dataDialogs?: string
     foundEgovNpa: number
     foundAdiletNpa: number
@@ -52,8 +52,12 @@ interface ResultsPageProps {
 }
 
 interface SourceType {
-    link: string
-    summary: string
+    url: string
+    short_description: string
+}
+interface SourceDialogType {
+  url: string
+  short_description: string
 }
 
 interface SocialMediaType {
@@ -219,9 +223,9 @@ export default function ResultsPage({
               >
                 <div
                   className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200
-                 shadow-lg hover:shadow-xl transition-all h-full flex flex-col gap-2"
+                 shadow-lg hover:shadow-xl transition-all h-full flex flex-col items-between"
                 >
-                  <p className={"font-light"}>{item.text}</p>
+                  <p className={"font-light h-14"}>{item.text}</p>
                   <p className={"text-6xl font-semibold text-blue-500"}>
                     <NumberFlow
                       spinTiming={{ duration: i * 250 + 500 }}
@@ -329,10 +333,10 @@ export default function ResultsPage({
                       key={index}
                       className="bg-white p-6 rounded-xl shadow-sm"
                     >
-                      <p className="text-gray-700">{item.summary}</p>
-                      {item.link && item.link !== "null" && (
+                      <p className="text-gray-700">{item.short_description}</p>
+                      {item.url && item.url !== "null" && (
                         <a
-                          href={item.link}
+                          href={item.url}
                           className="text-blue-500 hover:text-blue-700 mt-2 inline-block"
                           target="_blank"
                           rel="noopener noreferrer"
@@ -362,11 +366,11 @@ export default function ResultsPage({
                     className="bg-white p-6 rounded-xl shadow-sm"
                   >
                     <p className="text-gray-700">
-                      {item.summary || "Нет описания"}
+                      {item.short_description || "Нет описания"}
                     </p>
-                    {item.link && item.link !== "null" ? (
+                    {item.url && item.url !== "null" ? (
                       <a
-                        href={item.link}
+                        href={item.url}
                         className="text-blue-500 hover:text-blue-700 mt-2 inline-block"
                         target="_blank"
                         rel="noopener noreferrer"
