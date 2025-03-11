@@ -139,6 +139,7 @@ function ResearchPage({ id }: { id: string }) {
     <div className="min-h-screen flex items-center justify-center">
       {displayReport ? (
         <Results
+          task_id = {id}
           full={data?.full_research}
           createdAt={data?.created_at}
           finishedAt={data?.finished_at}

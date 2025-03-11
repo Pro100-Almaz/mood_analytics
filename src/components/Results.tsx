@@ -33,6 +33,7 @@ ChartJS.register(
 );
 
 interface ResultsPageProps {
+  task_id: string;
   title: string;
   foundPosts?: number;
   foundComments?: number;
@@ -82,6 +83,9 @@ interface SocialMediaType {
   comment_url: string;
   short_description: string;
 }
+interface GetDigest {
+  id: string
+}
 
 function formatTimeDifference(date1: string, date2: string) {
   // Парсим даты
@@ -107,6 +111,7 @@ function formatTimeDifference(date1: string, date2: string) {
   return parts.join(" ");
 }
 export default function ResultsPage({
+  task_id,
   title,
   web,
   fb,
@@ -132,6 +137,7 @@ export default function ResultsPage({
 }: ResultsPageProps) {
   const [activeSection, setActiveSection] = useState("egov_dialog");
   const [showNumber, setShowNumber] = useState(false);
+
   const safeParseJSON = (data: any, fallback: any[] = []) => {
     try {
       const parsed =
@@ -167,6 +173,8 @@ export default function ResultsPage({
     instagramOpinion,
     adiletOpinion,
   ]);
+
+
   const neutralCount = totalOpinion.filter(
     (item) => item.opinion === "neutral" || item.opinion === "нейтральное"
   ).length;
@@ -176,6 +184,45 @@ export default function ResultsPage({
   const positiveCount = totalOpinion.filter(
     (item) => item.opinion === "positive" || item.opinion === "позитивное"
   ).length;
+
+  const getDigest = async () => {
+
+    const sendData = {
+      all_opinion: negativeCount + positiveCount + neutralCount,
+      negative_opinion: negativeCount,
+      positive_opinion: positiveCount,
+      neutral_opinion: neutralCount,
+    };
+  
+    try {
+      const response = await fetch(`https://api.insitute.etdc.kz/generate_digest/${task_id}`, {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sendData),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to download file. Status: ${response.status}`);
+      }
+  
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `digest_${task_id}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+  
+      console.log("File downloaded successfully.");
+    } catch (error) {
+      console.error("Error downloading file:", error);
+    }
+  };
+  
 
   const dialogs: SourceType[] = useMemo(() => {
     const dataDialogsArray = safeParseJSON(dataDialogs, []);
@@ -258,7 +305,7 @@ export default function ResultsPage({
         animate={{ opacity: 1 }}
         className="max-w-6xl mx-auto px-4 py-8"
       >
-        <motion.h1
+        <motion.div
           initial={{ y: -50 }}
           animate={{ y: 0 }}
           className="text-3xl md:text-4xl font-light mb-6 text-center"
@@ -269,7 +316,7 @@ export default function ResultsPage({
               {title}
             </span>
           </h1>
-        </motion.h1>
+        </motion.div>
         <div className={"flex items-center gap-4 justify-center"}>
           {createdAt && finishedAt && (
             <p
@@ -324,20 +371,16 @@ export default function ResultsPage({
           ))}
         </div>
         <div className="flex justify-center p-4">
-          <a
-            href={`https://api.insitute.etdc.kz/digest?id=142`}
-            rel="noopener noreferrer"
-          >
             <motion.button
               className="relative z-30 px-4 py-2 flex items-center justify-center gap-2 rounded-lg 
                                          text-base font-light tracking-wide transition-all duration-300 ease-out 
                                          bg-gradient-to-r from-indigo-600/90 to-blue-600/90 hover:shadow-xl 
                                          hover:scale-105 shadow-lg text-white"
-              // onClick={() => setIsModalOpen(true)}
+                                         onClick={getDigest}
+
             >
               Сгенерировать виджет
             </motion.button>
-          </a>
         </div>
         <div className="flex justify-center mt-8 pb-6">
           <table className="border-collapse border border-gray-400 rounded-lg shadow-lg overflow-hidden">
@@ -763,3 +806,4 @@ export default function ResultsPage({
     </div>
   );
 }
+
