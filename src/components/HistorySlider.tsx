@@ -10,6 +10,7 @@ interface Research {
     id: number;
     query: string;
     date: string;
+    task_id: string;
     status: 'completed' | 'in_progress' | 'error';
 }
 
@@ -60,7 +61,7 @@ export function HistorySlider({researches}: HistorySliderProps) {
                             className="flex-shrink-0 w-[250px] bg-white rounded-xl p-2.5 shadow-sm
                        hover:shadow-md transition-all cursor-pointer"
                         >
-                            <Link href={`/research/${research.id}`} key={research.id} >
+                            <Link href={`/research/${research.task_id}`} key={research.task_id} >
                                 <div className="flex flex-col space-y-1 justify-between h-full">
                                     <div className="flex justify-between items-start gap-2">
                                         <h3 className="text-gray-900 font-medium text-xs leading-tight">

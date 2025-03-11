@@ -22,6 +22,7 @@ interface Research {
   query: string;
   Tools: string;
   web: string;
+  task_id: string,
   "Final report": string;
   HTML: string;
   egov: string;
@@ -223,10 +224,11 @@ function Home() {
         <div className="mb-8">
           <HistorySlider
             researches={
-              latest
+              Array.isArray(latest)
                 ? latest.map((el: Research) => ({
                     id: el.id,
                     query: el.query,
+                    task_id: el.task_id,
                     date: el.created_at,
                     status: el.finished_at ? "completed" : "in_progress",
                   }))
@@ -343,43 +345,45 @@ function Home() {
           </motion.button>
         </div>
         <>
-      <motion.button
-        onClick={() => setIsReviewOpen(true)}
-        className="fixed bottom-6 right-6 z-30 px-4 py-2 flex items-center justify-center gap-2 rounded-lg 
+          <motion.button
+            onClick={() => setIsReviewOpen(true)}
+            className="fixed bottom-6 right-6 z-30 px-4 py-2 flex items-center justify-center gap-2 rounded-lg 
                                text-base font-light tracking-wide transition-all duration-300 ease-out 
                                bg-gradient-to-r from-indigo-600/90 to-blue-600/90 hover:shadow-xl 
                               shadow-lg text-white hover:scale-105 "
-      >
-        Оставить отзыв
-      </motion.button>
+          >
+            Оставить отзыв
+          </motion.button>
 
-      {isReviewOpen && (
-        <div className="fixed bottom-16 right-6 bg-white p-4 shadow-lg rounded-lg w-80 border border-gray-200 mb-4">
-          <h3 className="text-lg font-medium text-gray-800 mb-2">Ваш отзыв</h3>
-          <textarea
-            className="w-full border p-2 rounded resize-none text-gray-700"
-            rows={3}
-            value={reviewText}
-            onChange={(e) => setReviewText(e.target.value)}
-            placeholder="Напишите ваш отзыв..."
-          />
-          <div className="flex justify-end mt-2 space-x-2">
-            <button
-              className="px-3 py-1 text-sm bg-gray-300 rounded hover:bg-gray-400"
-              onClick={() => setIsReviewOpen(false)}
-            >
-              Отмена
-            </button>
-            <button
-              className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-              onClick={handleSubmitReview}
-            >
-              Отправить
-            </button>
-          </div>
-        </div>
-      )}
-    </>
+          {isReviewOpen && (
+            <div className="fixed bottom-16 right-6 bg-white p-4 shadow-lg rounded-lg w-80 border border-gray-200 mb-4">
+              <h3 className="text-lg font-medium text-gray-800 mb-2">
+                Ваш отзыв
+              </h3>
+              <textarea
+                className="w-full border p-2 rounded resize-none text-gray-700"
+                rows={3}
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+                placeholder="Напишите ваш отзыв..."
+              />
+              <div className="flex justify-end mt-2 space-x-2">
+                <button
+                  className="px-3 py-1 text-sm bg-gray-300 rounded hover:bg-gray-400"
+                  onClick={() => setIsReviewOpen(false)}
+                >
+                  Отмена
+                </button>
+                <button
+                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                  onClick={handleSubmitReview}
+                >
+                  Отправить
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       </div>
     </div>
   );
