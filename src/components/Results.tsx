@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import ReactMarkdown from "react-markdown";
+import { useEffect } from "react";
 import remarkGfm from "remark-gfm";
 import { AIVisualization } from "@/components/AIVisualization";
 import {
@@ -137,6 +137,7 @@ export default function ResultsPage({
 }: ResultsPageProps) {
   const [activeSection, setActiveSection] = useState("egov_dialog");
   const [showNumber, setShowNumber] = useState(false);
+  const [opinionData, setOpinionData] = useState("");
 
   const safeParseJSON = (data: any, fallback: any[] = []) => {
     try {
@@ -175,6 +176,9 @@ export default function ResultsPage({
   ]);
 
 
+
+
+
   const neutralCount = totalOpinion.filter(
     (item) => item.opinion === "neutral" || item.opinion === "нейтральное"
   ).length;
@@ -192,6 +196,7 @@ export default function ResultsPage({
       negative_opinion: negativeCount,
       positive_opinion: positiveCount,
       neutral_opinion: neutralCount,
+      dominating_opinion: opinionData
     };
   
     try {
@@ -223,6 +228,60 @@ export default function ResultsPage({
     }
   };
   
+  const opinionsOnly: string[] = useMemo(() => {
+    const dataDialogsOpinionArray = safeParseJSON(dialogsArrayOpinion, []);
+    const openDataApinionArray = safeParseJSON(openDataOpinion, []);
+    const fbOpinionArray = safeParseJSON(fbOpinion, []);
+    const instagramApinionArray = safeParseJSON(instagramOpinion, []);
+    const nlaOpinionArray = safeParseJSON(nlaOpinion, []);
+    const adiletApinionArray = safeParseJSON(adiletOpinion, []);
+  
+    return [
+      ...dataDialogsOpinionArray,
+      ...openDataApinionArray,
+      ...fbOpinionArray,
+      ...instagramApinionArray,
+      ...nlaOpinionArray,
+      ...adiletApinionArray,
+    ].map((item) => item.opinion);
+  }, [
+    dialogsArrayOpinion,
+    openDataOpinion,
+    fbOpinion,
+    instagramOpinion,
+    nlaOpinion,
+    adiletOpinion,
+  ]);
+
+
+  const getOpinion = async () => {
+
+    const sendData = {
+      opinions: opinionsOnly,
+    };
+  
+    try {
+      const response = await fetch(`https://api.insitute.etdc.kz/get_opinion`, {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sendData),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed get opinion. Status: ${response.status}`);
+      }
+      const data = await response.json();
+      setOpinionData(data.response);
+    } catch (error) {
+      console.error("Error get opinion:", error);
+    }
+  };
+  useEffect(() => {
+    getOpinion();
+  }, []);
+
 
   const dialogs: SourceType[] = useMemo(() => {
     const dataDialogsArray = safeParseJSON(dataDialogs, []);
@@ -371,18 +430,36 @@ export default function ResultsPage({
           ))}
         </div>
         <div className="flex justify-center p-4">
-            <motion.button
-              className="relative z-30 px-4 py-2 flex items-center justify-center gap-2 rounded-lg 
+          <motion.button
+            className="relative z-30 px-4 py-2 flex items-center justify-center gap-2 rounded-lg 
                                          text-base font-light tracking-wide transition-all duration-300 ease-out 
                                          bg-gradient-to-r from-indigo-600/90 to-blue-600/90 hover:shadow-xl 
                                          hover:scale-105 shadow-lg text-white"
-                                         onClick={getDigest}
-
-            >
-              Сгенерировать виджет
-            </motion.button>
+            onClick={getDigest}
+          >
+            Сгенерировать дайджест
+          </motion.button>
         </div>
-        <div className="flex justify-center mt-8 pb-6">
+        {opinionData ? (
+          <div className="w-full flex justify-center my-4">
+            <div>
+              <h1 className="text-3xl font-light text-gray-800 mb-3 tracking-tight text-center">
+                Доминирующее мнение
+              </h1>
+              <div
+                className="w-[700px] bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200
+                 shadow-lg hover:shadow-xl transition-all flex flex-col items-between"
+              >
+                {opinionData}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="w-full flex justify-center my-4">
+            <p>Загрузка доминирующего мнения...</p>
+          </div>
+        )}
+        <div className="flex justify-center mt-16 pb-6">
           <table className="border-collapse border border-gray-400 rounded-lg shadow-lg overflow-hidden">
             <thead>
               <tr className="bg-gray-300 text-gray-800 text-left">
@@ -676,46 +753,46 @@ export default function ResultsPage({
                     )}
                     <p className="text-gray-700">{item.summary}</p>
                     <p
-                        className={`${
-                          item.opinion === "neutral" ||
-                          item.opinion === "нейтральное"
-                            ? "text-gray-400"
-                            : item.opinion === "negative" ||
-                              item.opinion === "негативное"
-                            ? "text-red-500"
-                            : item.opinion === "positive" ||
-                              item.opinion === "позитивное"
-                            ? "text-green-500"
-                            : "text-gray-700"
-                        }`}
-                      >
-                        Мнение:{" "}
-                        {item.opinion === "neutral" ||
+                      className={`${
+                        item.opinion === "neutral" ||
                         item.opinion === "нейтральное"
-                          ? "нейтральное"
+                          ? "text-gray-400"
                           : item.opinion === "negative" ||
                             item.opinion === "негативное"
-                          ? "негативное"
+                          ? "text-red-500"
                           : item.opinion === "positive" ||
                             item.opinion === "позитивное"
-                          ? "позитивное"
-                          : item.opinion}
-                      </p>
+                          ? "text-green-500"
+                          : "text-gray-700"
+                      }`}
+                    >
+                      Мнение:{" "}
+                      {item.opinion === "neutral" ||
+                      item.opinion === "нейтральное"
+                        ? "нейтральное"
+                        : item.opinion === "negative" ||
+                          item.opinion === "негативное"
+                        ? "негативное"
+                        : item.opinion === "positive" ||
+                          item.opinion === "позитивное"
+                        ? "позитивное"
+                        : item.opinion}
+                    </p>
                     <div className="flex justify-between">
-                        {item.link && item.link !== "null" && (
-                          <a
-                            href={item.link}
-                            className="text-blue-500 hover:text-blue-700 mt-2 inline-block"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Подробнее →
-                          </a>
-                        )}
-                        <p className="flex mt-2 text-sm">
-                          Релевантность: {item.relev_score}
-                        </p>
-                      </div>
+                      {item.link && item.link !== "null" && (
+                        <a
+                          href={item.link}
+                          className="text-blue-500 hover:text-blue-700 mt-2 inline-block"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Подробнее →
+                        </a>
+                      )}
+                      <p className="flex mt-2 text-sm">
+                        Релевантность: {item.relev_score}
+                      </p>
+                    </div>
                   </div>
                 ))
               ) : (
