@@ -113,7 +113,7 @@ function Digests() {
                         className="odd:bg-white even:bg-gray-100 transition-colors"
                       >
                         <td className="border border-gray-400 px-6 py-3">
-                          {index + 1}
+                          {(currentPage - 1) * 10 + index + 1}
                         </td>
                         <td className="border border-gray-400 px-6 py-3">
                           {item.title}
